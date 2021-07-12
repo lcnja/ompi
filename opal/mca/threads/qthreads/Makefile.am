@@ -11,6 +11,7 @@
 #                         All rights reserved.
 # Copyright (c) 2008      Cisco Systems, Inc.  All rights reserved.
 # Copyright (c) 2019      Sandia National Laboratories.  All rights reserved.
+# Copyright (c) 2021      Argonne National Laboratory.  All rights reserved.
 #
 # $COPYRIGHT$
 #
@@ -26,12 +27,9 @@ sources = \
     threads_qthreads_component.c \
     threads_qthreads_condition.c \
     threads_qthreads_module.c \
-    threads_qthreads_mutex.c \
-    threads_qthreads_wait_sync.c \
     threads_qthreads_mutex.h \
     threads_qthreads_threads.h \
-    threads_qthreads_tsd.h \
-    threads_qthreads_wait_sync.h
+    threads_qthreads_tsd.h
 
 lib_sources = $(sources)
 
@@ -47,7 +45,7 @@ mcacomponentdir = $(opallibdir)
 mcacomponent_LTLIBRARIES = $(component_install)
 mca_threads_qthreads_la_SOURCES = $(sources)
 mca_threads_qthreads_la_LDFLAGS = -module -avoid-version
-mca_threads_qthreads_la_LIBADD = $(top_builddir)/opal/lib@OPAL_LIB_PREFIX@open-pal.la \
+mca_threads_qthreads_la_LIBADD = $(top_builddir)/opal/lib@OPAL_LIB_NAME@.la \
         $(opal_qthreads_LIBS)
 
 noinst_LTLIBRARIES = $(component_noinst)

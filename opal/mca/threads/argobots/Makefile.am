@@ -11,6 +11,8 @@
 #                         All rights reserved.
 # Copyright (c) 2008      Cisco Systems, Inc.  All rights reserved.
 # Copyright (c) 2019      Sandia National Laboratories.  All rights reserved.
+# Copyright (c) 2021      Argonne National Laboratory.  All rights reserved.
+#
 # $COPYRIGHT$
 #
 # Additional copyrights may follow
@@ -25,12 +27,9 @@ sources = \
     threads_argobots_component.c \
     threads_argobots_condition.c \
     threads_argobots_module.c \
-    threads_argobots_mutex.c \
     threads_argobots_mutex.h \
     threads_argobots_threads.h \
-    threads_argobots_tsd.h \
-    threads_argobots_wait_sync.c \
-    threads_argobots_wait_sync.h
+    threads_argobots_tsd.h
 
 #lib = libmca_threads_argobots.la
 lib_sources = $(sources)
@@ -47,7 +46,7 @@ mcacomponentdir = $(opallibdir)
 mcacomponent_LTLIBRARIES = $(component_install)
 mca_threads_argobots_la_SOURCES = $(sources)
 mca_threads_argobots_la_LDFLAGS = -module -avoid-version
-mca_threads_argobots_la_LIBADD = $(top_builddir)/opal/lib@OPAL_LIB_PREFIX@open-pal.la \
+mca_threads_argobots_la_LIBADD = $(top_builddir)/opal/lib@OPAL_LIB_NAME@.la \
         $(opal_argo_LIBS)
 
 noinst_LTLIBRARIES = $(component_noinst)

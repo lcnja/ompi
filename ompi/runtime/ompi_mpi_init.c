@@ -397,6 +397,7 @@ int ompi_mpi_init(int argc, char **argv, int requested, int *provided,
     ompi_proc_t** procs;
     size_t nprocs;
     char *error = NULL;
+    char *evar;
     volatile bool active;
     bool background_fence = false;
     pmix_info_t info[2];
@@ -438,6 +439,14 @@ int ompi_mpi_init(int argc, char **argv, int requested, int *provided,
             return MPI_ERR_OTHER;
         }
     }
+
+    /* deal with OPAL_PREFIX to ensure that an internal PMIx installation
+     * is also relocated if necessary */
+#if OPAL_USING_INTERNAL_PMIX
+    if (NULL != (evar = getenv("OPAL_PREFIX"))) {
+        opal_setenv("PMIX_PREFIX", evar, true, &environ);
+    }
+#endif
 
     /* Figure out the final MPI thread levels.  If we were not
        compiled for support for MPI threads, then don't allow
@@ -560,6 +569,11 @@ int ompi_mpi_init(int argc, char **argv, int requested, int *provided,
     OMPI_TIMING_IMPORT_OPAL("rte_init");
 
     ompi_rte_initialized = true;
+    /* if we are oversubscribed, then set yield_when_idle
+     * accordingly */
+    if (ompi_mpi_oversubscribed) {
+        ompi_mpi_yield_when_idle = true;
+    }
 
     /* Register the default errhandler callback  */
     /* we want to go first */
@@ -1022,13 +1036,6 @@ int ompi_mpi_init(int argc, char **argv, int requested, int *provided,
         error = "ompi_dpm_dyn_init() failed";
         goto error;
     }
-
-    /* Undo OPAL calling opal_progress_event_users_increment() during
-       opal_init, to get better latency when not using TCP.  Do
-       this *after* dyn_init, as dyn init uses lots of RTE
-       communication and we don't want to hinder the performance of
-       that code. */
-    opal_progress_event_users_decrement();
 
     /* see if yield_when_idle was specified - if so, use it */
     opal_progress_set_yield_when_idle(ompi_mpi_yield_when_idle);
